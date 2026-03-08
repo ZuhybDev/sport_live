@@ -5,13 +5,17 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.ts"
   },
   "keywords": [],
   "author": "zohaibDev",
   "license": "ISC",
   "type": "module",
-  "dependencies": {
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "@types/ws": "^8.18.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "ws": "^8.19.0"
   }
 }

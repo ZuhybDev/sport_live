@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket Live Test</title>
+</head>
+<body>
+
+    <h1>Websocket broadcast</h1>
+
+    <h2 class="status">Connecting...</h2>
+
+    <form action="">
+        <input class="message-input" type="text" id="inp", placeholder="message">
+        <button>Send</button>
+    </form>
+
+    <h1>Live logs</h1>
+    <pre class="log"></pre>
+    
+
+
+</body>
+
+<script> 
+
+    const statusUsEle = document.querySelector('.status')
+    const log = document.querySelector('.log')
+    const input = document.querySelector('.message-input')
+
+    //handshake
+    const socket = new WebSocket('ws://localhost:8080')
+
+    const appendLog = (lbl, msg) => {
+        const entry = `${new Date().toLocaleTimeString()} ${lbl}\n`
+        log.textContent = entry + log.textContent
+    }
+
+    socket.addEventListener('open', () => {
+        statusUsEle.textContent = "CONNECTED: ws://localhost:8080"  
+        appendLog('[SYSTEM]', 'Tunnel Established')
+    })
+
+    socket.addEventListener('close', () => {
+        statusUsEle.textContent = "DISCONNECTED"  
+        appendLog('[SYSTEM]', 'Tunnel Collapsed')
+    })
+
+    socket.addEventListener('message',(e) => {
+        appendLog('[RECEIVED]', e.data)
+    } )
+</script>
+</html>
