@@ -1,53 +1,73 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Websocket Live Test</title>
 </head>
+
 <body>
 
     <h1>Websocket broadcast</h1>
 
     <h2 class="status">Connecting...</h2>
 
-    <form action="">
-        <input class="message-input" type="text" id="inp", placeholder="message">
+    <form id="form-message" action="">
+        <input class="input" required type="text" , placeholder="message">
         <button>Send</button>
     </form>
 
     <h1>Live logs</h1>
     <pre class="log"></pre>
-    
+
 
 
 </body>
 
-<script> 
+<script>
 
     const statusUsEle = document.querySelector('.status')
     const log = document.querySelector('.log')
-    const input = document.querySelector('.message-input')
+    const inp = document.querySelector('.input')
 
     //handshake
     const socket = new WebSocket('ws://localhost:8080')
 
-    const appendLog = (lbl, msg) => {
-        const entry = `${new Date().toLocaleTimeString()} ${lbl}\n`
+    const appendLog = (lbl, message) => {
+        const entry = `${new Date().toLocaleTimeString()} ${lbl} ${message}\n`
         log.textContent = entry + log.textContent
     }
 
     socket.addEventListener('open', () => {
-        statusUsEle.textContent = "CONNECTED: ws://localhost:8080"  
+        statusUsEle.textContent = "CONNECTED: ws://localhost:8080"
         appendLog('[SYSTEM]', 'Tunnel Established')
     })
 
     socket.addEventListener('close', () => {
-        statusUsEle.textContent = "DISCONNECTED"  
+        statusUsEle.textContent = "DISCONNECTED"
         appendLog('[SYSTEM]', 'Tunnel Collapsed')
     })
 
-    socket.addEventListener('message',(e) => {
+    socket.addEventListener('message', (e) => {
         appendLog('[RECEIVED]', e.data)
-    } )
+    })
+
+    //  form message
+    document.getElementById('form-message')
+        .addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            if (socket.readyState != WebSocket.OPEN) {
+                appendLog('[RECEIVED]', 'No Active Tunnel, Please refresh the Page')
+            }
+
+            const msg = inp.value.trim()
+
+            socket.send(msg);
+            appendLog('[SENT]', msg);
+            inp.value = "";
+        })
+
 </script>
+
 </html>
